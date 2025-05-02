@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Trends Visualization (2006-2016)</title>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f9f9f9;
+    }
+
+    .container {
+        max-width: 960px;
+        margin: 30px auto;
+        background-color: #fff;
+        padding: 20px 40px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        border-radius: 8px;
+    }
+
+    h1 {
+      color: #1a1a1a;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    #chart {
+      margin: 30px 0;
+      border: 1px solid #ddd;
+      background-color: #fff;
+      /* padding set by SVG margins */
+      border-radius: 5px;
+      position: relative; /* Needed for absolute positioning of tooltip */
+    }
+
+    /* Styling for chart elements */
+    .axis-label {
+        font-size: 12px;
+        fill: #555;
+    }
+
+    .tick line {
+        stroke: #e0e0e0;
+    }
+
+    .domain {
+        stroke: #aaa;
+    }
+
+    /* Styling for Tooltip */
+    .tooltip {
+      opacity: 0; /* Initially hidden */
+      position: absolute; /* Position relative to the page */
+      background-color: rgba(0, 0, 0, 0.75); /* Dark background */
+      color: white;
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 12px;
+      pointer-events: none; /* Prevent tooltip from blocking mouse events */
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      white-space: nowrap; /* Keep content on one line */
+      transition: opacity 0.2s ease-out;
+    }
+
+    /* Styling for Focus Elements (vertical line, circles) */
+    .focus-line {
+        stroke: #888;
+        stroke-width: 1px;
+        stroke-dasharray: 3,3;
+    }
+
+    .focus-circle {
+        fill: none;
+        stroke-width: 2px;
+    }
+
+    /* Styling for error messages */
+    .error-message {
+      color: #d32f2f;
+      background: #ffebee;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 5px;
+      border: 1px solid #ffcdd2;
+    }
+
+    /* Link styling */
+    .documentation-link {
+        display: block;
+        text-align: center;
+        margin-top: 30px;
+        padding: 10px;
+        background-color: #e7f3ff;
+        color: #0056b3;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.2s;
+    }
+    .documentation-link:hover {
+        background-color: #cce5ff;
+        text-decoration: underline;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Weather Trends: Temperature vs. Apparent Temperature (2006-2016)</h1>
+    <p>Interactive visualization of daily average temperatures over a decade. Hover over the chart to see details for a specific day, and use your mouse wheel or trackpad to zoom and pan through time.</p>
+
+    <div id="chart"></div>
+
+    <div id="error-message"></div>
+
+    <a href="docs.html" class="documentation-link">View Project Documentation & Video</a>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

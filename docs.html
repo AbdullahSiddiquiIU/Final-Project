@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Weather Data Visualization - Documentation</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.7;
+      padding: 2rem 3rem;
+      max-width: 850px;
+      margin: 30px auto;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    .content {
+        background-color: #fff;
+        padding: 30px 40px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        border-radius: 8px;
+    }
+    h1, h2, h3 {
+      color: #1a1a1a;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 8px;
+      margin-top: 2rem;
+    }
+    h1 {
+        text-align: center;
+        border-bottom: none;
+        margin-bottom: 1.5rem;
+    }
+    a {
+      color: #0056b3;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    code {
+      background-color: #f0f0f0;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-family: "Courier New", Courier, monospace;
+    }
+    .placeholder {
+        background-color: #fffadf;
+        border: 1px dashed #f0ad4e;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+        font-style: italic;
+    }
+    figure {
+        margin: 25px 0; /* Increased margin for figure */
+        text-align: center;
+    }
+    figure img { /* Added style for image */
+        border: 1px solid #ccc; /* Light border around image */
+        max-width: 100%; /* Ensure image is responsive */
+        height: auto;
+    }
+    figcaption {
+        font-size: 0.9em;
+        color: #555;
+        margin-top: 8px; /* Increased space above caption */
+    }
+  </style>
+</head>
+<body>
+<div class="content">
+  <h1>Weather Visualization – Final Project Documentation</h1>
+
+  <p><em> Abdullah Siddiqui - VISUALIZING INFORMATION/NEWM-N328 - May 1, 2025</em></p> <p>This document details the design and implementation of the interactive weather visualization project. The goal was to explore historical weather data using D3.js and create an effective interface for understanding temperature trends.</p>
+  <p><strong>View the Live Visualization:</strong> <a href="index.html" target="_blank">Weather Trends Visualization</a></p>
+
+  <h2>1. Project Goal & Dataset</h2>
+  <p>
+    The primary goal of this project was to build an interactive visualization using D3.js to explore weather patterns over a significant period. I aimed to move beyond static charts and incorporate features allowing user-driven exploration.
+  </p>
+  <p>
+    The dataset used is the "Historical Hourly Weather Data 2006-2016" available on Kaggle:
+    <a href="https://www.kaggle.com/datasets/muthuj7/weather-dataset/data" target="_blank">Kaggle Weather Dataset</a>.
+    This rich dataset contains over 96,000 hourly records with attributes like temperature, apparent temperature, humidity, wind speed, visibility, pressure, and precipitation type.
+  </p>
+  <p>
+    Given the large size and hourly granularity, plotting raw data directly is impractical for web performance. Therefore, a key step involved **aggregating the data into daily averages**. This approach retains the long-term trends while significantly improving visualization performance. The primary attributes visualized are:
+    <ul>
+      <li><strong>Date:</strong> Aggregated to the daily level.</li>
+      <li><strong>Average Temperature (°C):</strong> The mean daily temperature.</li>
+      <li><strong>Average Apparent Temperature (°C):</strong> The mean daily 'feels like' temperature.</li>
+      <li><strong>Average Humidity:</strong> The mean daily humidity level (shown in tooltips).</li>
+    </ul>
+  </p>
+
+  <h2>2. Design Process & Iterations</h2>
+
+  <h3>Initial Questions & Ideas</h3>
+  <p>
+    I started with several questions about the dataset:
+    <ul>
+      <li>How does the average daily temperature change over the 10-year period?</li>
+      <li>Are there noticeable differences between the actual average temperature and the average apparent ('feels like') temperature? When are these differences most pronounced?</li>
+      <li>Can typical seasonal patterns be clearly observed? Are there any anomalous years or periods?</li>
+      <li>How could interactivity help in exploring specific time ranges or data points?</li>
+    </ul>
+  </p>
+  <p>
+    To visualize this, I first sketched a basic line chart showing temperature against time, based on my initial thoughts about how the data might look. This sketch, shown below, helped solidify the basic layout before coding.
+  </p>
+    <figure>
+    <img src="IMG_0702.jpg" alt="Hand-drawn sketch of a line chart showing expected temperature trend" width="600" style="border: 1px solid #ccc;">
+    <figcaption>
+        Figure 1: Initial hand-drawn sketch visualizing expected temperature trends (derived from final project draft PDF).
+    </figcaption>
+</figure>
+
+  <h3>Development Iterations</h3>
+  <p>
+    The development process involved several iterations:
+    <ol>
+      <li><strong>Basic Line Chart (Hourly Data):</strong> My first attempt tried plotting the hourly temperature data directly. While functional, it was extremely slow in the browser and the line appeared very noisy, making long-term trends hard to see.</li>
+      <li><strong>Aggregation to Daily Averages:</strong> Recognizing the performance bottleneck and noise, I implemented data aggregation in JavaScript (using <code>d3.group</code> and <code>d3.mean</code>) to calculate daily averages. This dramatically improved performance and clarity.</li>
+      <li><strong>Adding Apparent Temperature:</strong> To address my second question, I added a second line representing the average apparent temperature, using a different color (orange) and style (dashed) for distinction, along with a legend.</li>
+      <li><strong>Implementing Interactivity (Tooltips):</strong> To allow users to see precise values, I added interactive tooltips that appear on hover, showing the date, average temperature, average apparent temperature, and average humidity for the closest day. This involved using <code>d3.bisector</code> to find the data point and dynamically updating a tooltip <code>div</code>.</li>
+      <li><strong>Implementing Interactivity (Zoom & Pan):</strong> To enable exploration of specific time periods, I integrated D3's zoom behavior (<code>d3.zoom</code>). This allows users to zoom in/out using the scroll wheel and pan by dragging, dynamically updating the X-axis and the line paths. A double-click resets the zoom.</li>
+      <li><strong>Refinements:</strong> Final touches included adding axis labels, refining the chart title, improving styling (CSS), adding robust error handling, and ensuring responsiveness of interactive elements.</li>
+    </ol>
+  </p>
+
+  <h2>3. Design Rationale</h2>
+  <p>
+    Several design choices were made to enhance clarity and usability:
+    <ul>
+      <li><strong>Line Chart:</strong> This chart type is ideal for showing trends over a continuous variable like time.</li>
+      <li><strong>Daily Aggregation:</strong> Chosen for performance and to smooth out hourly noise, making seasonal and yearly trends more apparent.</li>
+      <li><strong>Dual Lines (Temp vs. Apparent Temp):</strong> Directly comparing these two values addresses a key question. Using distinct colors (blue/orange) and a dashed style for apparent temperature aids visual differentiation. A legend clarifies which line is which.</li>
+      <li><strong>Tooltips on Hover:</strong> Provides detailed information (exact date, temps, humidity) on demand without cluttering the main visualization. They follow the cursor for intuitive use.</li>
+      <li><strong>Zoom and Pan:</strong> Empowers users to explore the data at different scales, from the overall 10-year trend down to specific months or seasons. This is crucial for discovering finer patterns or investigating anomalies.</li>
+      <li><strong>Clean Styling:</strong> A minimalist aesthetic with clear axes, labels, and appropriate margins focuses attention on the data itself. Subtle grid lines (via tick lines) aid value reading without being distracting.</li>
+      <li><strong>Color Choices:</strong> Steel blue and orange offer good contrast against the white background and are generally distinguishable.</li>
+    </ul>
+  </p>
+
+<h2>4. Discoveries & Findings (Using the Visualization)</h2>
+  <p>
+    Interacting with the visualization revealed several interesting patterns:
+    <ul>
+      <li><strong>Clear Seasonality:</strong> The expected yearly cycle of temperature rise and fall is immediately obvious across the entire decade.</li>
+      <li><strong>Apparent Temperature Deviations:</strong> Using the tooltips and zooming, I observed that during winter months (e.g., Jan/Feb), the average apparent temperature is frequently several degrees lower than the actual average temperature, likely due to wind chill effects factored into its calculation. Conversely, in humid summer months, the apparent temperature can sometimes be higher than the actual temperature.</li>
+      <li><strong>Specific Period Analysis:</strong> By zooming into the year 2012, it's possible to observe the warmer-than-average spring and hot summer experienced in many regions that year. Hovering over specific peaks reveals the maximum daily average temperatures reached.</li>
+      <li><strong>Humidity Correlation (via Tooltip):</strong> While not plotted directly, the tooltip reveals daily average humidity. Exploring periods of high apparent temperature often coincided with high humidity values, as expected.</li>
+    </ul>
+  </p>
+
+  <div class="screenshot-evidence">
+      <h3>Visual Evidence</h3>
+      <p>The following screenshots illustrate some of these findings:</p>
+
+      <figure>
+          <img src="Screen%20Shot%202025-05-01%20at%208.34.56%20PM.png" alt="Screenshot 1 of interactive weather chart showing findings" width="600" style="border: 1px solid #ccc;">
+          <figcaption>
+              Figure 2: Zoomed view of winter [Feburary 10/2012] highlighting the difference between actual and apparent temperature via tooltip.
+          </figcaption>
+      </figure>
+
+      <figure>
+          <img src="Screen%20Shot%202025-05-01%20at%205.20.45%20PM.png" alt="Screenshot 2 of interactive weather chart showing findings" width="600" style="border: 1px solid #ccc;">
+          <figcaption>
+              Figure 3: Tooltip indicating peak summer temperature on [July 26/2012].
+          </figcaption>
+      </figure>
+
+  </div>
+
+  <h2>5. Technology Used</h2>
+  <ul>
+    <li><strong>D3.js (v7):</strong> The core JavaScript library for data manipulation, SVG rendering, scales, axes, line generation, and interactive behaviors (zoom, tooltips using bisector).</li>
+    <li><strong>HTML5:</strong> Structure for the web page (<code>index.html</code>) and documentation (<code>docs.html</code>).</li>
+    <li><strong>CSS3:</strong> Styling for the page layout, chart elements (axes, lines), tooltip appearance, and overall aesthetics.</li>
+    <li><strong>JavaScript (ES6+):</strong> For data loading (<code>d3.csv</code>), parsing, aggregation logic, and coordinating D3 modules.</li>
+  </ul>
+
+<h2>6. Video Demonstration</h2>
+  <p>
+    A short video demonstrating the interactive features (hovering, zooming, panning) and discussing the findings mentioned above is embedded below.
+  </p>
+  <div class="video-container">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/wJbxpArkPqw?si=1KcyhMCz0RWelgtg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+  </div>
+
+  <h2>7. Challenges & Future Improvements</h2>
+  <p>
+      One challenge was parsing the specific date format in the CSV reliably. Handling missing or invalid data during aggregation (especially for apparent temperature and humidity) also required careful filtering. Implementing the zoom behavior correctly alongside the tooltip required managing coordinate systems (original vs. transformed scales).
+  </p>
+  <p>
+      Future improvements could include:
+      <ul>
+          <li>Adding brushing on a smaller context chart below the main chart for more intuitive range selection.</li>
+          <li>Implementing linked views, such as a scatter plot showing Temperature vs. Humidity that updates based on the selected time range.</li>
+          <li>Allowing users to toggle the visibility of the temperature/apparent temperature lines.</li>
+          <li>Exploring different aggregation levels (e.g., weekly, monthly) selectable by the user.</li>
+      </ul>
+  </p>
+
+  <h2>8. Final Thoughts</h2>
+  <p>
+    This project was an excellent hands-on experience in applying D3.js to a real-world dataset. Moving from a static chart to an interactive one significantly enhances the potential for data exploration and discovery. The process highlighted the importance of data preprocessing (aggregation) for performance and the iterative nature of visualization design. I feel much more comfortable implementing complex interactive features like linked tooltips and zooming/panning in D3.
+  </p>
+</div>
+</body>
+</html>
